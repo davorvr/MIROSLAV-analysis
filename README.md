@@ -1,6 +1,6 @@
 # MIROSLAV analysis
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/weiji14/deepbedmap/)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#url)
 
 ### What is it?
 
@@ -26,7 +26,7 @@ This repository holds the software for all stages of MIROSLAV data processing:
 
 #### Google Colab
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/weiji14/deepbedmap/) 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#url) 
 The entire workflow can be run in your web browser. Simply click the Colab button, which will lead you to an interactive environment where you can run the notebooks, and clone the entire workflow to adapt for your own logs' analysis.
 
 #### Locally, on your computer
