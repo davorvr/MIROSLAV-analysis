@@ -4,11 +4,7 @@
 
 ### What is it?
 
-This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data.
-
-You can run the entire Python/R workflow from your browser using Google Colab:
-
-`url`
+This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data. Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-device`](https://github.com/davorvr/MIROSLAV-device) repository.
 
 ### What is MIROSLAV, anyway?
 
@@ -95,6 +91,11 @@ In the meanwhile, users can install the GitHub version:
     ```R
     remotes::install_github("glmmTMB/glmmTMB")
     ```
+
+### Related repositories
+
+* [`mirofile`](https://github.com/davorvr/mirofile) - Your buddy for dealing with raw MIROSLAV data. A Python library used by Prepare-a-SLAV to parse raw MIROSLAV logs into a dataframe.
+* [`MIROSLAV-device`](https://github.com/davorvr/MIROSLAV-device) - Everything you need to construct the MIROSLAV device and start monitoring rodents' locomotor activity 24/7 in their home cages. Fully open source and scalable to hundreds of cages.
 
 ### License
 
