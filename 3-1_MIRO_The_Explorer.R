@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 # ---
-# title: "MIRO The Explorer"
-# author: "Davor Virag"
-# date: "`r Sys.Date()`"
-# output:
-#   html_document:
-#     code_folding: show
 # jupyter:
 #   jupytext:
 #     cell_metadata_filter: message,name,warning,fig.height,fig.width,tags,class.source,-all
@@ -15,7 +9,14 @@
 #       format_name: percent
 #       format_version: '1.3'
 #       jupytext_version: 1.16.2
+#   kernelspec:
+#     display_name: R
+#     language: R
+#     name: ir
 # ---
+
+# %% [markdown]
+# # MIRO The Explorer
 
 # %% [markdown]
 # The objective of MIRO The Explorer is to provide an initial look into the parameters describing a 24-hour sine wave:
@@ -25,6 +26,23 @@
 # -   **Phase shift** - Shift of a sinusoid's peak from the origin on the x-axis (time).
 #
 # The script will generate a plot showing how these parameters change over time across the experiment's treatment groups, of which there are two in our example.
+#
+# If you are running MIRO The Explorer via Google Colab, MIRO The Explorer will autodetect and set up the Colab environment in the following cell, and pull example data from the [MIROSLAV toolkit GitHub repository](https://github.com/davorvr/MIROSLAV-analysis).
+#
+# If you want to run MIRO The Explorer in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
+
+# %%
+is_colab <- system("pip list | grep -F google-colab")
+if (is_colab == 0) {
+  install.packages(c("dplyr", "lubridate", "ggplot2", "patchwork"))
+  dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
+  dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
+  system("wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
+  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
+  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
+}
+
+# %% [markdown]
 #
 # ## Requirements
 #

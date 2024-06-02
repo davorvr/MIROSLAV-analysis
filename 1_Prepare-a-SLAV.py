@@ -8,6 +8,10 @@
 #       format_name: percent
 #       format_version: '1.3'
 #       jupytext_version: 1.16.2
+#   kernelspec:
+#     display_name: .venv
+#     language: python
+#     name: python3
 # ---
 
 # %% [markdown]
@@ -28,6 +32,15 @@ except ModuleNotFoundError:
     IN_COLAB = False
     pass
 else:
+    # !sudo apt-get update -y
+    # !sudo apt-get install python3.12
+    from IPython.display import clear_output 
+    clear_output()
+    # !sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+    # !sudo update-alternatives --config python3
+    # !python3 --version
+    # !sudo apt install python3-pip
+    clear_output()
     # %pip install pandas
     # %pip install mirofile
     # !wget https://raw.githubusercontent.com/davorvr/MIROSLAV-analysis/main/1_Prepare-a-SLAV_config.toml
@@ -50,6 +63,7 @@ else:
 # %%
 import pandas as pd
 import tomllib
+import os
 from datetime import datetime
 from pathlib import Path
 from math import ceil
@@ -90,7 +104,7 @@ def unpack_full_colmap(colmap: dict[dict]):
 # Set the current working directory to the location of this script
 
 # %%
-wd = Path(__file__).parent.resolve()
+wd = Path(os.path.dirname(os.path.realpath('__file__'))).resolve()
 
 # %% [markdown]
 # Load the TOML config file and extract all user-defined parameters

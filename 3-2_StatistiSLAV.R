@@ -8,6 +8,10 @@
 #       format_name: percent
 #       format_version: '1.3'
 #       jupytext_version: 1.16.2
+#   kernelspec:
+#     display_name: R
+#     language: R
+#     name: ir
 # ---
 
 # %% [markdown]
@@ -16,14 +20,14 @@
 # %% [markdown]
 # The objective of StatistiSLAV is to fit a statistical model for estimating the parameters describing a 24-hour sine wave (MESOR, amplitude, phase shift), and the respective contrasts between treatment groups, for periods of interest.
 #
-# If you are running StatistiSLAV via Google Colab, MIROSine will autodetect and set up the Colab environment in the following cell, and pull example data from the [MIROSLAV toolkit GitHub repository](https://github.com/davorvr/MIROSLAV-analysis).
+# If you are running StatistiSLAV via Google Colab, StatistiSLAV will autodetect and set up the Colab environment in the following cell, and pull example data from the [MIROSLAV toolkit GitHub repository](https://github.com/davorvr/MIROSLAV-analysis).
 #
 # If you want to run StatistiSLAV in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
 #
 
 # %%
 is_colab <- system("pip list | grep -F google-colab")
-if (is_colab) {
+if (is_colab == 0) {
   install.packages(c("dplyr", "lubridate", "emmeans", "ggplot2", "patchwork", "glmmTMB", "DHARMa"))
   if (packageVersion("glmmTMB") <= "1.1.9") {
     install.packages("remotes")
@@ -32,9 +36,9 @@ if (is_colab) {
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
-  !wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet
-  !wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds
-  !wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds
+  system("wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
+  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
+  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
 }
 
 # %% [markdown]

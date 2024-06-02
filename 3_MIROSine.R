@@ -9,6 +9,10 @@
 #       format_name: percent
 #       format_version: '1.3'
 #       jupytext_version: 1.16.2
+#   kernelspec:
+#     display_name: R
+#     language: R
+#     name: ir
 # ---
 
 # %% [markdown]
@@ -23,11 +27,11 @@
 
 # %%
 is_colab <- system("pip list | grep -F google-colab")
-if (is_colab) {
+if (is_colab == 0) {
   install.packages(c("dplyr", "lubridate", "progress"))
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
-  !wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet
+  system("wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
 }
 
 # %% [markdown]
