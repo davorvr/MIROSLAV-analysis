@@ -1,30 +1,44 @@
-#' ---
-#' title: "MIROSine"
-#' author: "Davor Virag"
-#' date: "2024-05-19"
-#' output: html_notebook
-#' ---
-#' 
-#' The objective of MIROSine is to analyse the animals’ circadian rhythm of locomotor activity over the duration of the experiment. Simple periodicity with a defined period (24 hours in the case of a circadian rhythm) is well-described by the sinusoidal function, so a linear model with a sine and cosine term is fitted to the data. The given coefficients are used to calculate the amplitude, midline, and phase of a sine wave describing each sensor's recordings for every day of the experiment. These parameters can then be analysed across groups and time intervals, as will be done by MIRO The Explorer and StatistiSLAV afterwards. More information can be found in the MIROSLAV paper: *insert DOI*
-#' 
-#' ## Requirements
-#' 
-#' First, we import the libraries we will require. 
-#' 
+# -*- coding: utf-8 -*-
+# ---
+# title: "MIROSine"
+# author: "Davor Virag"
+# date: "2024-05-19"
+# output: html_notebook
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     formats: ipynb,R:percent
+#     text_representation:
+#       extension: .R
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.16.2
+# ---
+
+# %% [markdown]
+# The objective of MIROSine is to analyse the animals’ circadian rhythm of locomotor activity over the duration of the experiment. Simple periodicity with a defined period (24 hours in the case of a circadian rhythm) is well-described by the sinusoidal function, so a linear model with a sine and cosine term is fitted to the data. The given coefficients are used to calculate the amplitude, midline, and phase of a sine wave describing each sensor's recordings for every day of the experiment. These parameters can then be analysed across groups and time intervals, as will be done by MIRO The Explorer and StatistiSLAV afterwards. More information can be found in the MIROSLAV paper: *insert DOI*
+#
+# ## Requirements
+#
+# First, we import the libraries we will require. 
+#
+# %%
 ## ----imports, message=FALSE-------------------------------------------------------
 library(dplyr)
 library(lubridate)
 library(progress)
 
-#' 
-#' ## Import data
-#' 
-#' We import the data we will be working on. We need to define:
-#' 
-#' -   The name of the experiment we want to process,
-#' -   The filename of the TidySLAV output,
-#' -   The experiment's start and end times.
-#' 
+# %% [markdown]
+#
+# ## Import data
+#
+# We import the data we will be working on. We need to define:
+#
+# -   The name of the experiment we want to process,
+# -   The filename of the TidySLAV output,
+# -   The experiment's start and end times.
+#
+# %%
 ## ----experiment_variables---------------------------------------------------------
 exp_name <- "mph"
 tidydata_filename <- paste0(exp_name, "-pir-tidy-source1minute-resampled5minutes.parquet")
@@ -32,9 +46,11 @@ sinedata_filename <- paste0(exp_name, "_sine_data.rds")
 exp_start <- as_datetime("2022-05-07 05:46:00")
 exp_end <- as_datetime("2022-05-31 17:46:00")
 
-#' 
-#' Then, we load TidySLAV data.
-#' 
+# %% [markdown]
+#
+# Then, we load TidySLAV data.
+#
+# %%
 ## ----import_tidydata, echo=FALSE--------------------------------------------------
 wd <- paste0(getwd(), "/")
 data <- arrow::read_parquet(paste0(wd, "2_outputs_tidy/", tidydata_filename))
@@ -47,11 +63,13 @@ data$n_day <- data$hourcount %/% 24
 day_start_decimal <- 5+46/60
 treatments <- unique(data$treatment)
 
-#' 
-#' ## Perform the calculations
-#' 
-#' We will now calculate the sine parameters for each sensor's respective daily recordings throughout the experiment.
-#' 
+# %% [markdown]
+#
+# ## Perform the calculations
+#
+# We will now calculate the sine parameters for each sensor's respective daily recordings throughout the experiment.
+#
+# %%
 ## ----sine_calculation-------------------------------------------------------------
 sensor_animal_ids <- unique(data$sensor_animal_id)
 days <- unique(data$n_day)
@@ -76,6 +94,7 @@ sine_data <- data.frame(
 )
 sine_models <- list()
 
+# %%
 i <- 0
 for (id in sensor_animal_ids) {
   sine_models[[id]] <- list()
@@ -150,9 +169,11 @@ for (id in sensor_animal_ids) {
   }
 }
 
-#' 
-#' We will save two RDS files, one containing the results, and the other containing all of the models.
-#' 
+# %% [markdown]
+#
+# We will save two RDS files, one containing the results, and the other containing all of the models.
+#
+# %%
 ## ----save_results-----------------------------------------------------------------
 sine_data.file <- paste0(wd, "3_outputs_R/", exp_name, "_sine_data.rds")
 sine_models.file <- paste0(wd, "3_outputs_R/", exp_name, "_sine_models.rds")
