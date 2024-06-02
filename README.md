@@ -1,10 +1,8 @@
 # MIROSLAV analysis
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#url)
-
 ### What is it?
 
-This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data. Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-device`](https://github.com/davorvr/MIROSLAV-device) repository.
+This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data. Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-device`](https://github.com/davorvr/MIROSLAV-device) repository. The repository also includes real MIROSLAV data from our lab as an example you can work on.
 
 ### What is MIROSLAV, anyway?
 
@@ -12,26 +10,25 @@ This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis
 
 This repository holds the software for all stages of MIROSLAV data processing:
 
-| **Step** 	|   **Processing tool**   	| **What does it do?**                                                                                                                                                      	| **What does it output?**                                                                                                                	|
-|:--------:	|:-----------------------:	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|-----------------------------------------------------------------------------------------------------------------------------------------	|
-|   **1**  	|   **_Prepare-a-SLAV_**  	| Processes raw textual logs into a data structure, labels the data, resamples the data to reduce size and facilitate subsequent analyses.                                  	| A tabular dataframe containing labelled sensor readings.                                                                                	|
-|   **2**  	|      **_TidySLAV_**     	| Melts Prepare-a-SLAV’s table into a tall format, performs standardisation against baseline values, detects periods when the sensors were disconnected, and adds metadata. 	| A tall dataframe with experimental metadata, suitable for plotting and statistical analysis.                                            	|
-|   **3**  	|      **_MIROSine_**     	| Operates on TidySLAV’s dataframe, reduces each sensor’s readings to daily 24-hour rhythm amplitudes, mean activities (MESORs), and times of peak activity (acrophases).   	| A dataframe containing three parameters for every day of each sensor’s recordings, describing the 24-hour rhythm of circadian activity. 	|
-|  **3.1** 	| **_MIRO The Explorer_** 	| Generate exploratory plots showing temporal dynamics of the three MIROSine parameters over the course of the experiment                                                   	| Exploratory plots                                                                                                                       	|
-|  **3.2** 	|    **_StatistiSLAV_**   	| Statistical comparisons of treated groups in specified timepoints                                                                                                         	| Plots and a results Excel document                                                                                                      	|
+| **Step** | **Processing tool**                                                                                                                                                                                            | **What does it do?**                                                                                                                                                      | **What does it output?**                                                                                                                |
+|:--------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| **1**    | **_Prepare-a-SLAV_** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/davorvr/MIROSLAV-analysis/blob/main/1_Prepare-a-SLAV.ipynb)         | Processes raw textual logs into a data structure, labels the data, resamples the data to reduce size and facilitate subsequent analyses.                                  | A tabular dataframe containing labelled sensor readings.                                                                                |
+| **2**    | **_TidySLAV_** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/davorvr/MIROSLAV-analysis/blob/main/1_Prepare-a-SLAV.ipynb)               | Melts Prepare-a-SLAV’s table into a tall format, performs standardisation against baseline values, detects periods when the sensors were disconnected, and adds metadata. | A tall dataframe with experimental metadata, suitable for plotting and statistical analysis.                                            |
+| **3**    | **_MIROSine_** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/davorvr/MIROSLAV-analysis/blob/main/3_MIROSine.ipynb)                     | Operates on TidySLAV’s dataframe, reduces each sensor’s readings to daily 24-hour rhythm amplitudes, mean activities (MESORs), and times of peak activity (acrophases).   | A dataframe containing three parameters for every day of each sensor’s recordings, describing the 24-hour rhythm of circadian activity. |
+| **3.1**  | **_MIRO The Explorer_** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/davorvr/MIROSLAV-analysis/blob/main/3-1_MIRO_The_Explorer.ipynb) | Generate exploratory plots showing temporal dynamics of the three MIROSine parameters over the course of the experiment                                                   | Exploratory plots.                                                                                                                      |
+| **3.2**  | **_StatistiSLAV_** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/davorvr/MIROSLAV-analysis/blob/main/3-2_StatistiSLAV.ipynb)           | Statistical comparisons of treated groups in specified timepoints                                                                                                         | Plots and an Excel document containing results.                                                                                         |
 
-<sup><sup>_Table adapted from our MIROSLAV paper_</sup></sup>
+<sup>_Table adapted from our MIROSLAV paper_</sup>
 
 ### How to utilise this workflow?
 
 #### Google Colab
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#url) 
-The entire workflow can be run in your web browser. Simply click the Colab button, which will lead you to an interactive environment where you can run the notebooks, and clone the entire workflow to adapt for your own logs' analysis.
+ 
+The entire workflow can be run in your web browser. Simply click on the ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg) buttons, which will lead you to an interactive environment where you can run the notebooks with our data to see a working example, or upload your own and see what you got with MIROSLAV!
 
 #### Locally, on your computer
 
-Getting the analysis running locally is a bit more complicated. There are many ways to do it:
+To run the analysis on your computer, you need Python, R, some dependencies, and this repository. Here are a few quick tips:
 
 * **Windows:**
   * We personally prefer the [WinPython](https://winpython.github.io/) to get an easy-to-setup Python distribution with a lot of useful preinstalled software.
@@ -77,20 +74,14 @@ Listed in the `R_requirements.txt` file:
 * `glmmTMB`
 * `DHARMa`
 
-**Note:** The current version of `glmmTMB` (at the time of writing), `1.1.9`, has a bug when modelling Pearson type VII distributions `t_family`. [We have reported this bug and it was fixed promptly](https://github.com/glmmTMB/glmmTMB/issues/1024), but it will probably we released with the next version of `glmmTMB`.
-In the meanwhile, users can install the GitHub version:
+**Note:** The current version of `glmmTMB` (at the time of writing), `1.1.9`, has a bug when modelling Pearson type VII distributions `t_family`. [We have reported this bug and it was fixed promptly](https://github.com/glmmTMB/glmmTMB/issues/1024), but it will probably we released with the next version of `glmmTMB`. If you're not sure if you have a recent enough version of `glmmTMB`, you can run this code, which will check it for you and install the GitHub version if necessary:
 
-1. Install the `remotes` package:
-
-    ```R
+  ```R
+  if (packageVersion("glmmTMB") <= "1.1.9") {
     install.packages("remotes")
-    ```
-
-2. Install the development version of `glmmTMB` directly from the GitHub repo:
-
-    ```R
     remotes::install_github("glmmTMB/glmmTMB")
-    ```
+  }
+  ```
 
 ### Related repositories
 

@@ -17,6 +17,26 @@
 # TidySLAV takes Prepare-a-SLAV's preprocessed, columnar Parquet files and turns the table into a tidy, tall format ([paper](https://www.jstatsoft.org/article/view/v059i10), [informal version](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html) by the creator of the concept). This enables easy addition of experimental metadata and later analysis in a statistical software package, like with StatistiSLAV.
 #
 # Additionally, some columns are removed, such as disconnected and faulty sensors, as specified by the user. Brief periods when operational sensors were disconnected (e.g. due to behavioural testing or bedding change) are automatically recognised and set to *NA*, indicating an unknown activity state. Finally, the time series are standardised according to each sensor’s respective baseline measurements taken before treatment application.
+#
+# If you are running TidySLAV via Google Colab, TidySLAV will autodetect and set up the Colab environment in the following cell, and pull example data from the [MIROSLAV toolkit GitHub repository](https://github.com/davorvr/MIROSLAV-analysis).
+#
+# If you want to run TidySLAV in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
+
+# %%
+try:
+    import google.colab
+    IN_COLAB = True
+except ModuleNotFoundError:
+    IN_COLAB = False
+    pass
+else:
+    # %pip install pandas
+    # %pip install numpy
+    # %pip install plotly
+    # !mkdir 1_outputs_prepared
+    # !wget -P 1_outputs_prepared https://github.com/davorvr/MIROSLAV-analysis/blob/main/1_outputs_prepared/mph-pir-rack_M-dtyped-resampled-1minute.parquet
+    # !wget -P 1_outputs_prepared https://github.com/davorvr/MIROSLAV-analysis/blob/main/1_outputs_prepared/mph-pir-rack_R-dtyped-resampled-1minute.parquet
+    pass
 
 # %% [markdown]
 # ***
@@ -39,7 +59,10 @@ import pprint
 import plotly.io as pio
 # if figures don't display properly, you can try changing the renderer
 # https://plotly.com/python/renderers/
-pio.renderers.default = "notebook"
+if IN_COLAB:
+    pio.renderers.default = "colab"
+else:
+    pio.renderers.default = "notebook"
 #pio.renderers.default = "vscode"
 
 import plotly.express as px

@@ -1,12 +1,4 @@
 # ---
-# title: "StatistiSLAV"
-# author: "Davor Virag"
-# date: "`r Sys.Date()`"
-# output:
-#   html_document:
-#     code_folding: show
-# editor_options: 
-#   chunk_output_type: console
 # jupyter:
 #   jupytext:
 #     cell_metadata_filter: class.source,fig.width,message,fig.height,tags,name,-all
@@ -19,13 +11,39 @@
 # ---
 
 # %% [markdown]
+# # StatistiSLAV
+
+# %% [markdown]
 # The objective of StatistiSLAV is to fit a statistical model for estimating the parameters describing a 24-hour sine wave (MESOR, amplitude, phase shift), and the respective contrasts between treatment groups, for periods of interest.
+#
+# If you are running StatistiSLAV via Google Colab, MIROSine will autodetect and set up the Colab environment in the following cell, and pull example data from the [MIROSLAV toolkit GitHub repository](https://github.com/davorvr/MIROSLAV-analysis).
+#
+# If you want to run StatistiSLAV in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
+#
+
+# %%
+is_colab <- system("pip list | grep -F google-colab")
+if (is_colab) {
+  install.packages(c("dplyr", "lubridate", "emmeans", "ggplot2", "patchwork", "glmmTMB", "DHARMa"))
+  if (packageVersion("glmmTMB") <= "1.1.9") {
+    install.packages("remotes")
+    remotes::install_github("glmmTMB/glmmTMB")
+  }
+  wd <- paste0(getwd(), "/")
+  dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
+  dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
+  !wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet
+  !wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds
+  !wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds
+}
+
+# %% [markdown]
 #
 # ## Requirements
 #
 # First, we import the libraries we will require.
 
-# %% name="imports" message=false
+# %% message=false name="imports"
 library(dplyr)
 library(lubridate)
 library(emmeans)
@@ -41,7 +59,7 @@ library(DHARMa)
 # -   `timestamp_to_nday` - converts timestamps to a decimal number of days since the experiment start
 # -   `phase_to_todpeak` - converts a phase shift in radians to the zenith's time of day
 
-# %% name="functions" message=false class.source="fold-hide"
+# %% class.source="fold-hide" message=false name="functions"
 generate_contrast_grid <- function(model, emmeans_obj, trtcol_name, treatments, timecol_name, timeperiods) {
   # Function to generate a grid of contrasts we're interested in
   # that will be used by emmeans to produce them.
@@ -216,7 +234,7 @@ dayperiod_labels <- c(baseline = "Baseline",
                       before_beh = "After model induction (late, 1 week)",
                       after_beh = "After behavioural tests")
 
-# %% name="model_dataprep" class.source="fold-hide" message=false
+# %% class.source="fold-hide" message=false name="model_dataprep"
 model_data$is_baseline <- as.factor(model_data$is_baseline)
 model_data$treatment <- as.factor(model_data$treatment)
 model_data$dayperiod <- as.factor(model_data$dayperiod)
@@ -424,7 +442,7 @@ em.peak_hour.df <- em.peak_hour.df %>%
 fig.width <- 4.5
 fig.height <- 5
 
-# %% name="plot_getdata" class.source="fold-hide"
+# %% class.source="fold-hide" name="plot_getdata"
 plot_data <- data.frame(treatment=c(),
                         dayperiod=c(),
                         hour=c(),
@@ -457,7 +475,7 @@ for (dp in names(model_dayperiods)) {
   }
 }
 
-# %% name="plot_create" class.source="fold-hide"
+# %% class.source="fold-hide" name="plot_create"
 plots <- list()
 dotplot_title_size <- 10
 dotplot_axislab_size <- 9
@@ -559,16 +577,16 @@ for (dp in names(model_dayperiods)) {
     plot_layout(heights = c(3,2))
 }
 
-# %% name="plot_show_1" class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width"
+# %% class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width" name="plot_show_1"
 plots[["baseline"]]
 
-# %% name="plot_show_2" class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width"
+# %% class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width" name="plot_show_2"
 plots[["after_stz"]]
 
-# %% name="plot_show_3" class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width"
+# %% class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width" name="plot_show_3"
 plots[["before_beh"]]
 
-# %% name="plot_show_4" class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width"
+# %% class.source="fold-hide" fig.height="#R_CODE#fig.height" fig.width="#R_CODE#fig.width" name="plot_show_4"
 plots[["after_beh"]]
 
 # %% name="plot_show_all"

@@ -1,3 +1,53 @@
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.16.2
+# ---
+
+# %% [markdown]
+# # Prepare-a-SLAV
+
+# %% [markdown]
+# Prepare-a-SLAV utilises the mirofile library to load raw MIROSLAV data into a pandas data frame. Appropriate animal IDs are applied, and the data is downsampled from the default MIROSLAV sampling rate (10 sensor readings/binary values per second) to an arbitrary, user-defined time interval (bin). Prepare-a-SLAV's configuration is performed through the Prepare-a-SLAV TOML configuration file where you can find more information about its parameters.
+#
+# If you are running Prepare-a-SLAV via Google Colab, Prepare-a-SLAV will autodetect and set up the Colab environment in the following cell, and pull example data and the TOML configuration file from the [MIROSLAV toolkit GitHub repository](https://github.com/davorvr/MIROSLAV-analysis).
+#
+# If you want to run Prepare-a-SLAV in Google Colab *and* with your own data, you can upload your configuration and data files using the File Browser in the sidebar on the left after running the following cell.
+
+# %%
+try:
+    import google.colab
+    IN_COLAB = True
+except ModuleNotFoundError:
+    IN_COLAB = False
+    pass
+else:
+    # %pip install pandas
+    # %pip install mirofile
+    # !wget https://raw.githubusercontent.com/davorvr/MIROSLAV-analysis/main/1_Prepare-a-SLAV_config.toml
+    # !mkdir 0_raw_logs
+    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz
+    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz
+    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-16T01-33-25-478055.gz
+    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-25T14-03-17-240158.gz
+    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-06T19-19-57-669185.gz
+    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-16T01-33-22-935712.gz
+    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-25T07-57-01-575482.gz
+    pass
+
+# %% [markdown]
+# The environment has been set up. If you wish, you can load your own data using the sidebar now.
+
+# %% [markdown]
+# ***
+
+# %%
 import pandas as pd
 import tomllib
 from datetime import datetime
@@ -5,7 +55,10 @@ from pathlib import Path
 from math import ceil
 from mirofile import mirofile
 
-# helper functions for managing imported column mappings
+# %% [markdown]
+# Define helper functions for managing imported column mappings
+
+# %%
 def _unpack_mcp_colmap(colmap: dict):
     unpacked_colmap = {}
     # first do PH7..0
@@ -32,24 +85,20 @@ def unpack_full_colmap(colmap: dict[dict]):
         #unpacked_colmap.append(new_mcp_colmap.copy())
     return unpacked_colmap
 
-""" USER CONFIG """
 
-experiment = "mph"
-resample_bin = "1min"
-set_dtypes = True
-resample = True
+# %% [markdown]
+# Set the current working directory to the location of this script
 
-
-#devices = ("m_desna_polica", "m_srednja_polica")
-
-""" END USER CONFIG """
+# %%
 wd = Path(__file__).parent.resolve()
 
-# Load the TOML config file
+# %% [markdown]
+# Load the TOML config file and extract all user-defined parameters
+
+# %%
 with open(wd / "1_Prepare-a-SLAV_config.toml", "rb") as cfg_file:
     config = tomllib.load(cfg_file)
 
-# Extract the variables
 try:
     experiment = config["id_variables"]["experiment"]
     set_dtypes = config["processing_params"]["set_dtypes"]
@@ -73,21 +122,22 @@ for k, v in toml_colnames.items():
         raise KeyError("Couldn't process cage mappings from config file!") from exc
     colmaps.update({k: v})
 
-
 log_path = Path.cwd() / "0_raw_logs"
 output_path = Path.cwd() / "1_outputs_prepared"
 output_path.mkdir(exist_ok=True)
 
-# The number of rows read at once. Reduce if you run into memory issues,
-# increase if you want to speed up the process:
+# %% [markdown]
+# The number of rows read at once. Reduce if you run into memory issues.
+
+# %%
 chunk_size = 10**6
 
+# %%
 ts_column = "ts_recv"
 ts_delta = True
 ts_index_map = {"ts_recv": 0,
                 "ts_sent": 1}
 ts_index = ts_index_map[ts_column]
-
 resample_bin_td = pd.to_timedelta(resample_bin)
 
 for device, colmap in colmaps.items():
@@ -189,7 +239,8 @@ for device, colmap in colmaps.items():
         print(f"({device}) Chunk processed. Last timestamp: {file_chunk.index[-1]}")
     print(f"{pqfile.name}: ", datetime.now()-start)
 
-### speed and memory usage profiling results
-### used: ipython %timeit, memory_profiler "mprof" commands
-#  chunk_size = 10**6 - 6min 16s (rack_R: 0:03:01.080722, rack_M: 0:03:35.932075) 1498.711 MiB (peak)
-#  chunk_size = 10**7 - (rack_R: 0:03:08.342470, rack_M: 0:03:36.150298), 13966.395 MiB (peak)
+# %% [markdown]
+# ***
+
+# %% [markdown]
+# You should be able to obtain the output files from the sidebar now, and proceed to [TidySLAV](https://github.com/davorvr/MIROSLAV-analysis).

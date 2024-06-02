@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 # ---
-# title: "MIROSine"
-# author: "Davor Virag"
-# date: "2024-05-19"
-# output: html_notebook
 # jupyter:
 #   jupytext:
 #     cell_metadata_filter: -all
@@ -16,14 +12,30 @@
 # ---
 
 # %% [markdown]
+# # MIROSine
+
+# %% [markdown]
 # The objective of MIROSine is to analyse the animals’ circadian rhythm of locomotor activity over the duration of the experiment. Simple periodicity with a defined period (24 hours in the case of a circadian rhythm) is well-described by the sinusoidal function, so a linear model with a sine and cosine term is fitted to the data. The given coefficients are used to calculate the amplitude, midline, and phase of a sine wave describing each sensor's recordings for every day of the experiment. These parameters can then be analysed across groups and time intervals, as will be done by MIRO The Explorer and StatistiSLAV afterwards. More information can be found in the MIROSLAV paper: *insert DOI*
 #
+# If you are running MIROSine via Google Colab, MIROSine will autodetect and set up the Colab environment in the following cell, and pull example data from the [MIROSLAV toolkit GitHub repository](https://github.com/davorvr/MIROSLAV-analysis).
+#
+# If you want to run MIROSine in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
+
+# %%
+is_colab <- system("pip list | grep -F google-colab")
+if (is_colab) {
+  install.packages(c("dplyr", "lubridate", "progress"))
+  wd <- paste0(getwd(), "/")
+  dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
+  !wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet
+}
+
+# %% [markdown]
 # ## Requirements
 #
 # First, we import the libraries we will require. 
 #
 # %%
-## ----imports, message=FALSE-------------------------------------------------------
 library(dplyr)
 library(lubridate)
 library(progress)
@@ -39,7 +51,6 @@ library(progress)
 # -   The experiment's start and end times.
 #
 # %%
-## ----experiment_variables---------------------------------------------------------
 exp_name <- "mph"
 tidydata_filename <- paste0(exp_name, "-pir-tidy-source1minute-resampled5minutes.parquet")
 sinedata_filename <- paste0(exp_name, "_sine_data.rds")
@@ -51,7 +62,6 @@ exp_end <- as_datetime("2022-05-31 17:46:00")
 # Then, we load TidySLAV data.
 #
 # %%
-## ----import_tidydata, echo=FALSE--------------------------------------------------
 wd <- paste0(getwd(), "/")
 data <- arrow::read_parquet(paste0(wd, "2_outputs_tidy/", tidydata_filename))
 data$ts_recv <- as_datetime(data$ts_recv, tz="UTC")
@@ -70,7 +80,6 @@ treatments <- unique(data$treatment)
 # We will now calculate the sine parameters for each sensor's respective daily recordings throughout the experiment.
 #
 # %%
-## ----sine_calculation-------------------------------------------------------------
 sensor_animal_ids <- unique(data$sensor_animal_id)
 days <- unique(data$n_day)
 total_model_n <- length(sensor_animal_ids) * length(days) # 3618
@@ -174,10 +183,8 @@ for (id in sensor_animal_ids) {
 # We will save two RDS files, one containing the results, and the other containing all of the models.
 #
 # %%
-## ----save_results-----------------------------------------------------------------
 sine_data.file <- paste0(wd, "3_outputs_R/", exp_name, "_sine_data.rds")
 sine_models.file <- paste0(wd, "3_outputs_R/", exp_name, "_sine_models.rds")
 dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
 saveRDS(sine_data, sine_data.file)
 saveRDS(sine_models, sine_models.file)
-

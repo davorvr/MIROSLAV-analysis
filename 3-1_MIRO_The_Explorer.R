@@ -30,7 +30,7 @@
 #
 # First, we import the libraries we will require.
 
-# %% name="imports" message=false
+# %% message=false name="imports"
 library(dplyr)
 library(lubridate)
 library(ggplot2)
@@ -39,7 +39,7 @@ library(patchwork)
 # %% [markdown]
 # Then, we define useful functions, in this case only one: it will convert a date and time into the integer number of days since the specified start of an experiment.
 
-# %% name="functions" message=false
+# %% message=false name="functions"
 timestamp_to_nday <- function(dt, start=exp_start) {
   # Turn timestamps into a decimal number of days since start.
   # It's easier to mark events on plots using decimal numbers than timestamps.
@@ -139,7 +139,7 @@ ts_beh$ymax <- Inf
 #
 # We then calculate the mean, median, and standard deviation of the MESOR, amplitude, and phase for each treatment group and day. We will use these parameters to reconstruct group sine waves and plot estimates for each day.
 
-# %% name="prepare_data" tags=["remove_input"] warning=false message=false class.source="fold-hide"
+# %% class.source="fold-hide" message=false name="prepare_data" tags=["remove_input"] warning=false
 mean_trim_factor <- 0.05
 sine_data.summary <- sine_data %>%
   group_by(n_day, treatment) %>%
@@ -208,7 +208,7 @@ dodge_width <- 0.6
 # in section 4. as needed.
 plot_statistic <- "median" # "mean" or "median" 
 
-# %% name="plot_stats" tags=["remove_input"] warning=false message=false class.source="fold-hide" fig.height=6 fig.width=10
+# %% class.source="fold-hide" fig.height=6 fig.width=10 message=false name="plot_stats" tags=["remove_input"] warning=false
 # Mesor - mean of activity levels in one day
 p.mesor <- ggplot(sine_data.summary, aes(x=n_day, y=mesor.mean, group=interaction(n_day, treatment), color=treatment))+
   scale_color_discrete(labels=c("Control", "STZ-icv"))+
@@ -308,7 +308,7 @@ alpha_stz <- 1
 stz_linewidth <- 0.3
 alpha_behaviour <- 0.4
 
-# %% name="plot_sine" tags=["remove_input"] warning=false message=false class.source="fold-hide" fig.height=2 fig.width=10
+# %% class.source="fold-hide" fig.height=2 fig.width=10 message=false name="plot_sine" tags=["remove_input"] warning=false
 sine_plot <- ggplot(sine_data.plot_data, aes(x=x_day, y=pred_val, color=treatment))+
   scale_x_continuous("Day", breaks = seq(0,25,1))+#, limits=c(min(sine_data.summary$n_day)-1,max(sine_data.summary$n_day)+1))+
   scale_color_discrete(labels=c("Control", "STZ-icv"))+
