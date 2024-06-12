@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.2
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: .venv
 #     language: python
@@ -27,20 +27,23 @@
 # If you want to run TidySLAV in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
 
 # %%
+import importlib.util
 try:
-    import google.colab
-    IN_COLAB = True
+    importlib.util.find_spec("google.colab")
 except ModuleNotFoundError:
     IN_COLAB = False
-    pass
 else:
-    # %pip install pandas
-    # %pip install numpy
-    # %pip install plotly
-    # !mkdir 1_outputs_prepared
-    # !wget -P 1_outputs_prepared https://github.com/davorvr/MIROSLAV-analysis/blob/main/1_outputs_prepared/mph-pir-rack_M-dtyped-resampled-1minute.parquet
-    # !wget -P 1_outputs_prepared https://github.com/davorvr/MIROSLAV-analysis/blob/main/1_outputs_prepared/mph-pir-rack_R-dtyped-resampled-1minute.parquet
-    pass
+    IN_COLAB = True
+    from IPython.display import clear_output 
+    import importlib.metadata
+    import packaging.version
+    if packaging.version.Version(importlib.metadata.version("pandas")) < packaging.version.Version("2.2"):
+        # %pip install -Uq "pandas==2.2"
+    from google.colab import output
+    output.enable_custom_widget_manager()
+    # !mkdir -p 1_outputs_prepared
+    # !wget -O 1_outputs_prepared/mph-pir-rack_M-dtyped-resampled-1minute.parquet https://github.com/davorvr/MIROSLAV-analysis/raw/main/1_outputs_prepared/mph-pir-rack_M-dtyped-resampled-1minute.parquet
+    # !wget -O 1_outputs_prepared/mph-pir-rack_R-dtyped-resampled-1minute.parquet https://github.com/davorvr/MIROSLAV-analysis/raw/main/1_outputs_prepared/mph-pir-rack_R-dtyped-resampled-1minute.parquet
 
 # %% [markdown]
 # ***
@@ -239,7 +242,7 @@ devices = []
 # %%
 # Get a list of all Prepare-a-SLAV files for the given experiment and bin
 device_file = {}
-prepfile_list = [f for f in dir_in.glob(f"{experiment_name}-pir-*-{input_data_period.replace(" ", "")}.parquet")]
+prepfile_list = [f for f in dir_in.glob(f"{experiment_name}-pir-*-{input_data_period.replace(' ', '')}.parquet")]
 if not devices:
     # If no specific devices are given, get all
     for f in prepfile_list:
@@ -402,7 +405,7 @@ df = df.set_index(ts_column)
 # We calculate the frequency at which the data was resampled without relying on what is stated in the filename, just in case.
 
 # %%
-input_data_period_calculated = pd.Series(df.index.diff()).mode()[0]
+input_data_period_calculated = pd.Series(df.index).diff().mode()[0]
 
 # %% [markdown]
 # These are the values that will be passed to `thresh_value` and `thresh_rl` arguments of the `replace_consecutive_ones` function. More specifically, the run length as a number of values will be calculated from the time delta given.
@@ -802,7 +805,6 @@ def setup_hm(fig, autoscale=True, zmin=None, zmax=None):
                      ticktext=[datetime.time(i, 0).strftime("%H:%M") for i in range(0,24)])
     if not autoscale:
         fig.update_traces(zmin=zmin, zmax=zmax)
-    #fig.update_traces(zauto=autoscale)
 
 def setup_delta_hm(fig, autoscale=True, zmin=None, zmax=None):
     fig.update_layout(plot_bgcolor="#ffffff",
@@ -811,7 +813,6 @@ def setup_delta_hm(fig, autoscale=True, zmin=None, zmax=None):
     fig.update_yaxes(tickformat="%b %d", autorange="reversed")
     if not autoscale:
         fig.update_traces(zmin=zmin, zmax=zmax)
-    #fig.update_traces(zauto=autoscale)
 
 def update_hm(fig, plot_index, plot_indexes, data, title, checkpoint, autoscale=True, zmin=None, zmax=None):
     animal = plot_indexes[plot_index]
@@ -833,7 +834,8 @@ def update_hm(fig, plot_index, plot_indexes, data, title, checkpoint, autoscale=
     if not autoscale:
         fig.update_traces(zmin=zmin, zmax=zmax, zauto=False)
     fig.update_layout(title=title.format(checkpoint=checkpoint, animal=animal))
-    #fig.update_traces(zauto=autoscale)
+    if IN_COLAB:
+        fig.show()
 
 def update_delta_hm(fig, plot_index, plot_indexes, data, title, checkpoint, autoscale=True, zmin=None, zmax=None):
     animal = plot_indexes[plot_index]
@@ -847,8 +849,8 @@ def update_delta_hm(fig, plot_index, plot_indexes, data, title, checkpoint, auto
     if not autoscale:
         fig.update_traces(zmin=zmin, zmax=zmax, zauto=False)
     fig.update_layout(title=title.format(checkpoint=checkpoint, animal=animal))
-    #fig.update_traces(zauto=autoscale)
-    #fig.update_layout(title=f"Miro NaNs (data: {checkpoint}): count for {animal} per sensor")
+    if IN_COLAB:
+        fig.show()
 
 
 # %% [markdown]
@@ -881,13 +883,20 @@ fig_na = go.FigureWidget(make_subplots(rows=2, cols=1,
 setup_hm(fig_na, autoscale, all_zmin["na"], all_zmax["na"])
 update_this_plot = lambda plot_index: update_hm(fig_na, plot_index, plot_indexes, data_na, "MIRO NAs (data: {checkpoint}): count for {animal} per sensor", checkpoint, autoscale, all_zmin["na"], all_zmax["na"])
 
-update_this_plot(0)
-
-slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
-display(slider)
-# Link the slider to the update function
-widgets.interactive(update_this_plot, plot_index=slider)
-fig_na
+if IN_COLAB:
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    w = widgets.interactive(update_this_plot, plot_index=slider)
+    display(w)
+else:
+    # Fill the plot with the first dataset
+    update_this_plot(0)
+    # Create the slider and show it
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    display(slider)
+    # Link the slider to the update function
+    widgets.interactive(update_this_plot, plot_index=slider)
+    # Show the plot
+    display(fig_na)
 
 # %% [markdown]
 # ##### NA values, sensor deltas
@@ -901,13 +910,20 @@ fig_na_delta = go.FigureWidget(go.Heatmap())
 setup_delta_hm(fig_na_delta, autoscale, all_zmin["na_delta"], all_zmax["na_delta"])
 update_this_plot = lambda plot_index: update_delta_hm(fig_na_delta, plot_index, plot_indexes, data_na_delta, "MIRO NAs (data: {checkpoint}): H-L sensor delta for {animal}<br><sup>positive: more NAs in H, negative: more NAs in L</sup>", checkpoint, autoscale, all_zmin["na_delta"], all_zmax["na_delta"])
 
-update_this_plot(0)
-
-slider = widgets.IntSlider(value=0, min=0, max=len(data_na_delta)-1, step=1, description="Plot index")
-display(slider)
-# Link the slider to the update function
-widgets.interactive(update_this_plot, plot_index=slider)
-fig_na_delta
+if IN_COLAB:
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    w = widgets.interactive(update_this_plot, plot_index=slider)
+    display(w)
+else:
+    # Fill the plot with the first dataset
+    update_this_plot(0)
+    # Create the slider and show it
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    display(slider)
+    # Link the slider to the update function
+    widgets.interactive(update_this_plot, plot_index=slider)
+    # Show the plot
+    display(fig_na_delta)
 
 # %% [markdown]
 # ##### MIRO readings, per sensor
@@ -923,13 +939,20 @@ fig_hm = go.FigureWidget(make_subplots(rows=2, cols=1,
 setup_hm(fig_hm, autoscale, all_zmin["heatmap"], all_zmax["heatmap"])
 update_this_plot = lambda plot_index: update_hm(fig_hm, plot_index, plot_indexes, data_heatmap, "MIRO values (data: {checkpoint}): bin mean for {animal} per sensor", checkpoint, autoscale, all_zmin["heatmap"], all_zmax["heatmap"])
 
-update_this_plot(0)
-
-slider = widgets.IntSlider(value=0, min=0, max=len(data_heatmap)-1, step=1, description="Plot index")
-display(slider)
-# Link the slider to the update function
-widgets.interactive(update_this_plot, plot_index=slider)
-fig_hm
+if IN_COLAB:
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    w = widgets.interactive(update_this_plot, plot_index=slider)
+    display(w)
+else:
+    # Fill the plot with the first dataset
+    update_this_plot(0)
+    # Create the slider and show it
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    display(slider)
+    # Link the slider to the update function
+    widgets.interactive(update_this_plot, plot_index=slider)
+    # Show the plot
+    display(fig_hm)
 
 # %% [markdown]
 # ##### MIRO readings, sensor deltas
@@ -942,13 +965,21 @@ plot_indexes = dict(enumerate(data_delta))
 fig_hm_delta = go.FigureWidget(go.Heatmap())
 setup_delta_hm(fig_hm_delta, autoscale, all_zmin["delta"], all_zmax["delta"])
 update_this_plot = lambda plot_index: update_delta_hm(fig_hm_delta, plot_index, plot_indexes, data_delta, "MIRO values (data: {checkpoint}): H-L sensor delta for {animal}<br><sup>positive: more detections by H, negative: more detections by L</sup>", checkpoint, autoscale, all_zmin["delta"], all_zmax["delta"])
-update_this_plot(0)
 
-slider = widgets.IntSlider(value=0, min=0, max=len(data_delta)-1, step=1, description="Plot index")
-display(slider)
-# Link the slider to the update function
-widgets.interactive(update_this_plot, plot_index=slider)
-fig_hm_delta
+if IN_COLAB:
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    w = widgets.interactive(update_this_plot, plot_index=slider)
+    display(w)
+else:
+    # Fill the plot with the first dataset
+    update_this_plot(0)
+    # Create the slider and show it
+    slider = widgets.IntSlider(value=0, min=0, max=len(data_na)-1, step=1, description="Plot index")
+    display(slider)
+    # Link the slider to the update function
+    widgets.interactive(update_this_plot, plot_index=slider)
+    # Show the plot
+    display(fig_hm_delta)
 
 # %% [markdown]
 #

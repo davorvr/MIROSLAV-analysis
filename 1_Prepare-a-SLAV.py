@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.2
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: .venv
 #     language: python
@@ -25,34 +25,31 @@
 # If you want to run Prepare-a-SLAV in Google Colab *and* with your own data, you can upload your configuration and data files using the File Browser in the sidebar on the left after running the following cell.
 
 # %%
+import importlib.util
 try:
-    import google.colab
-    IN_COLAB = True
+    importlib.util.find_spec("google.colab")
 except ModuleNotFoundError:
     IN_COLAB = False
-    pass
 else:
-    # !sudo apt-get update -y
-    # !sudo apt-get install python3.12
+    IN_COLAB = True
+    import sys
     from IPython.display import clear_output 
-    clear_output()
-    # !sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
-    # !sudo update-alternatives --config python3
-    # !python3 --version
-    # !sudo apt install python3-pip
-    clear_output()
-    # %pip install pandas
-    # %pip install mirofile
+    import importlib.metadata
+    import packaging.version
+    if packaging.version.Version(importlib.metadata.version("pandas")) < packaging.version.Version("2.2"):
+        # %pip install -Uq "pandas==2.2"
+    # %pip install --ignore-requires-python mirofile
+    # %pip install fastparquet
     # !wget https://raw.githubusercontent.com/davorvr/MIROSLAV-analysis/main/1_Prepare-a-SLAV_config.toml
     # !mkdir 0_raw_logs
-    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz
-    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz
-    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-16T01-33-25-478055.gz
-    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-25T14-03-17-240158.gz
-    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-06T19-19-57-669185.gz
-    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-16T01-33-22-935712.gz
-    # !wget -P 0_raw_logs https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-25T07-57-01-575482.gz
-    pass
+    # !wget -O 0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz
+    # !wget -O 0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-06T19-19-57-669585.gz
+    # !wget -O 0_raw_logs/mph-pir-rack_M.2022-05-16T01-33-25-478055.gz https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-16T01-33-25-478055.gz
+    # !wget -O 0_raw_logs/mph-pir-rack_M.2022-05-25T14-03-17-240158.gz https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_M.2022-05-25T14-03-17-240158.gz
+    # !wget -O 0_raw_logs/mph-pir-rack_R.2022-05-06T19-19-57-669185.gz https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-06T19-19-57-669185.gz
+    # !wget -O 0_raw_logs/mph-pir-rack_R.2022-05-16T01-33-22-935712.gz https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-16T01-33-22-935712.gz
+    # !wget -O 0_raw_logs/mph-pir-rack_R.2022-05-25T07-57-01-575482.gz https://github.com/davorvr/MIROSLAV-analysis/raw/main/0_raw_logs/mph-pir-rack_R.2022-05-25T07-57-01-575482.gz
+    clear_output()
 
 # %% [markdown]
 # The environment has been set up. If you wish, you can load your own data using the sidebar now.
@@ -62,7 +59,12 @@ else:
 
 # %%
 import pandas as pd
-import tomllib
+if IN_COLAB and sys.hexversion < 0x030b0000:
+    OLD_TOML = True
+    import toml
+else:
+    OLD_TOML = False
+    import tomllib
 import os
 from datetime import datetime
 from pathlib import Path
@@ -110,8 +112,12 @@ wd = Path(os.path.dirname(os.path.realpath('__file__'))).resolve()
 # Load the TOML config file and extract all user-defined parameters
 
 # %%
-with open(wd / "1_Prepare-a-SLAV_config.toml", "rb") as cfg_file:
-    config = tomllib.load(cfg_file)
+if OLD_TOML:
+    with open(wd / "1_Prepare-a-SLAV_config.toml", "r") as cfg_file:
+        config = toml.load(cfg_file)
+else:
+    with open(wd / "1_Prepare-a-SLAV_config.toml", "rb") as cfg_file:
+        config = tomllib.load(cfg_file)
 
 try:
     experiment = config["id_variables"]["experiment"]
@@ -227,6 +233,7 @@ for device, colmap in colmaps.items():
             file_chunk = file_chunk.rename(colmap, axis="columns")
             file_chunk = file_chunk.loc[:,~file_chunk.columns.str.startswith("H_na")]
             file_chunk = file_chunk.loc[:,~file_chunk.columns.str.startswith("L_na")]
+            file_chunk = file_chunk.copy()
         if ts_delta:
             if ts_column == "ts_recv":
                 secondary_ts = "ts_sent"

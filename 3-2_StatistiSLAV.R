@@ -7,7 +7,7 @@
 #       extension: .R
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.2
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: R
 #     language: R
@@ -26,19 +26,19 @@
 #
 
 # %%
-is_colab <- system("pip list | grep -F google-colab")
+is_colab <- suppressWarnings(system("pip list | grep -F google-colab"))
 if (is_colab == 0) {
-  install.packages(c("dplyr", "lubridate", "emmeans", "ggplot2", "patchwork", "glmmTMB", "DHARMa"))
+  install.packages(c("arrow", "dplyr", "lubridate", "emmeans", "ggplot2", "patchwork", "glmmTMB", "DHARMa"))
   if (packageVersion("glmmTMB") <= "1.1.9") {
     install.packages("remotes")
-    remotes::install_github("glmmTMB/glmmTMB")
+    remotes::install_github("glmmTMB/glmmTMB/glmmTMB")
   }
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
-  system("wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
-  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
-  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
+  system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
+  system("wget -O 3_outputs_R/mph_sine_data.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
+  system("wget -O 3_outputs_R/mph_sine_models.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
 }
 
 # %% [markdown]

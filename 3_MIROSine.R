@@ -8,7 +8,7 @@
 #       extension: .R
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.2
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: R
 #     language: R
@@ -26,12 +26,12 @@
 # If you want to run MIROSine in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
 
 # %%
-is_colab <- system("pip list | grep -F google-colab")
+is_colab <- suppressWarnings(system("pip list | grep -F google-colab"))
 if (is_colab == 0) {
-  install.packages(c("dplyr", "lubridate", "progress"))
+  install.packages(c("arrow", "dplyr", "lubridate", "progress"))
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
-  system("wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
+  system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
 }
 
 # %% [markdown]

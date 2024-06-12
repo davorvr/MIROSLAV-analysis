@@ -8,7 +8,7 @@
 #       extension: .R
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.2
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: R
 #     language: R
@@ -32,14 +32,14 @@
 # If you want to run MIRO The Explorer in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
 
 # %%
-is_colab <- system("pip list | grep -F google-colab")
+is_colab <- suppressWarnings(system("pip list | grep -F google-colab"))
 if (is_colab == 0) {
-  install.packages(c("dplyr", "lubridate", "ggplot2", "patchwork"))
+  install.packages(c("arrow", "dplyr", "lubridate", "ggplot2", "patchwork"))
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
-  system("wget -P 2_outputs_tidy https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
-  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
-  system("wget -P 3_outputs_R https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
+  system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
+  system("wget -O 3_outputs_R/mph_sine_data.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
+  system("wget -O 3_outputs_R/mph_sine_models.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
 }
 
 # %% [markdown]
@@ -300,6 +300,7 @@ p.phase <- ggplot(sine_data.summary, aes(x=n_day, y=peak_hour.mean, group=intera
   ylab(paste("Peak hour", plot_statistic))
 
 # Use patchwork to draw plots of the three parameters one below the other
+options(repr.plot.width = 7.55, repr.plot.height = 5.5, repr.plot.res = 600)
 p.mesor / p.amp / p.phase +
   plot_annotation(title="             Parameter view") +
   plot_layout(guides="collect", axes="collect") &
@@ -310,6 +311,7 @@ p.mesor / p.amp / p.phase +
         legend.spacing.x = unit(0, "mm"), legend.spacing.y = unit(0, "mm"),
         legend.box.margin=margin(-10,0,-10,0),
         plot.title = element_text(size = 10))
+
 ggsave("3_outputs_R/3-2_MIRO-The-Explorer_PV.png", plot=last_plot(), width=7.55, height=5.5, dpi=600)
 
 # %% [markdown]
@@ -360,5 +362,6 @@ sine_plot <- ggplot(sine_data.plot_data, aes(x=x_day, y=pred_val, color=treatmen
         plot.margin = unit(c(0,0,0,0), "mm"))+
   ggtitle("Rhythm simulation")+
   ylab("")
+options(repr.plot.width = 7.55, repr.plot.height = 2, repr.plot.res = 600)
 plot(sine_plot)
 ggsave("3_outputs_R/3-2_MIRO-The-Explorer_RS.png", plot=sine_plot, width=7.55, height=2, dpi=600)
