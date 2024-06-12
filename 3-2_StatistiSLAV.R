@@ -28,7 +28,18 @@
 # %%
 is_colab <- suppressWarnings(system("pip list | grep -F google-colab"))
 if (is_colab == 0) {
-  install.packages(c("arrow", "dplyr", "lubridate", "emmeans", "ggplot2", "patchwork", "glmmTMB", "DHARMa"))
+  system("wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
+  system("apt install ./libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
+  options(
+    HTTPUserAgent =
+      sprintf(
+        "R/%s R (%s)",
+        getRversion(),
+        paste(getRversion(), R.version["platform"], R.version["arch"], R.version["os"])
+      )
+  )
+  install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/focal/latest")
+  install.packages(c("dplyr", "lubridate", "emmeans", "ggplot2", "patchwork", "glmmTMB", "DHARMa"))
   if (packageVersion("glmmTMB") <= "1.1.9") {
     install.packages("remotes")
     remotes::install_github("glmmTMB/glmmTMB/glmmTMB")
