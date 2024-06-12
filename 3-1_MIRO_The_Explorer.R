@@ -50,8 +50,9 @@ if (is_colab) {
         paste(getRversion(), R.version["platform"], R.version["arch"], R.version["os"])
       )
   )
-  install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/focal/latest")
-  install.packages(c("dplyr", "lubridate", "ggplot2", "patchwork"))
+  install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
+  install.packages(c("patchwork"))
+  wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
   system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/raw/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
@@ -318,7 +319,11 @@ p.phase <- ggplot(sine_data.summary, aes(x=n_day, y=peak_hour.mean, group=intera
   ylab(paste("Peak hour", plot_statistic))
 
 # Use patchwork to draw plots of the three parameters one below the other
-options(repr.plot.width = 7.55, repr.plot.height = 5.5, repr.plot.res = 600)
+if (is_colab) {
+  options(repr.plot.width = 7.55, repr.plot.height = 5.5, repr.plot.res = 250)
+} else {
+  options(repr.plot.width = 7.55, repr.plot.height = 5.5, repr.plot.res = 600)
+}
 p.mesor / p.amp / p.phase +
   plot_annotation(title="             Parameter view") +
   plot_layout(guides="collect", axes="collect") &
@@ -359,7 +364,7 @@ sine_plot <- ggplot(sine_data.plot_data, aes(x=x_day, y=pred_val, color=treatmen
   geom_vline(xintercept = (ts_stz$stz_injection_1), color = "black", alpha = alpha_stz, linewidth=stz_linewidth)+
   geom_vline(xintercept = (ts_stz$stz_injection_2), color = "black", alpha = alpha_stz, linewidth=stz_linewidth)+
   #geom_line(linewidth=0.8)+
-  geom_smooth(se = F, span=0.04, n=2400, linewidth=0.7)+
+  suppressWarnings(geom_smooth(se = F, span=0.04, n=2400, linewidth=0.7))+
 #  geom_point(position=position_dodge(width=0.5))+
 #  geom_errorbar(position=position_dodge(width=0.5),
 #                aes(y=mesor.mean,
@@ -380,6 +385,10 @@ sine_plot <- ggplot(sine_data.plot_data, aes(x=x_day, y=pred_val, color=treatmen
         plot.margin = unit(c(0,0,0,0), "mm"))+
   ggtitle("Rhythm simulation")+
   ylab("")
-options(repr.plot.width = 7.55, repr.plot.height = 2, repr.plot.res = 600)
-plot(sine_plot)
-ggsave("3_outputs_R/3-2_MIRO-The-Explorer_RS.png", plot=sine_plot, width=7.55, height=2, dpi=600)
+if (is_colab) {
+  options(repr.plot.width = 7.55, repr.plot.height = 2, repr.plot.res = 250)
+} else {
+  options(repr.plot.width = 7.55, repr.plot.height = 2, repr.plot.res = 600)
+}
+suppressWarnings(suppressMessages(plot(sine_plot)))
+suppressWarnings(suppressMessages(ggsave("3_outputs_R/3-2_MIRO-The-Explorer_RS.png", plot=sine_plot, width=7.55, height=2, dpi=600), classes = c("messages", "warnings")))

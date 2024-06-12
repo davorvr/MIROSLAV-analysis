@@ -24,15 +24,14 @@
 #
 # If you want to run StatistiSLAV in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
 #
+# Also, the current glmmTMB release (1.1.9) has a bug which doesn't allow it to simulate residuals for the Pearson type VII distribution family (`t_family`). This is only a problem if you're using it (the examples do for phase shift modelling). If the variable `build_glmmtmb` in the following cell is set to `TRUE`, the pre-release glmmTMB version will be built from source, but this takes around 5-10 minutes on Google Colab.
 
 # %%
-return_code <- suppressWarnings(system("pip list | grep -F google-colab"))
-if (return_code == 0) {
-  is_colab = TRUE
-} else {
-  is_colab = FALSE
-}
-if (is_colab) {
+build_glmmtmb = TRUE
+
+# %%
+is_colab <- suppressWarnings(system("pip list | grep -F google-colab"))
+if (is_colab == 0) {
   system("wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
   system("apt install ./libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
   system("rm ./libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
@@ -44,18 +43,21 @@ if (is_colab) {
         paste(getRversion(), R.version["platform"], R.version["arch"], R.version["os"])
       )
   )
-  install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/focal/latest")
-  install.packages(c("dplyr", "lubridate", "emmeans", "ggplot2", "patchwork", "glmmTMB", "DHARMa"))
-  if (packageVersion("glmmTMB") <= "1.1.9") {
-    install.packages("remotes")
-    remotes::install_github("glmmTMB/glmmTMB/glmmTMB")
-  }
+  install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
+  install.packages(c("writexl", "remotes", "emmeans", "patchwork", "glmmTMB"), repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
   system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/raw/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
   system("wget -O 3_outputs_R/mph_sine_data.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
   system("wget -O 3_outputs_R/mph_sine_models.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
+}
+if (build_glmmtmb && (packageVersion("glmmTMB") <= "1.1.9")) {
+  if (is_colab) {
+    remotes::install_github("glmmTMB/glmmTMB/glmmTMB", repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
+  } else {
+    remotes::install_github("glmmTMB/glmmTMB/glmmTMB")
+  }
 }
 
 # %% [markdown]

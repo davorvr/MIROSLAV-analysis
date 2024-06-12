@@ -44,7 +44,7 @@ if (is_colab) {
         paste(getRversion(), R.version["platform"], R.version["arch"], R.version["os"])
       )
   )
-  install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/focal/latest")
+  install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/raw/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
