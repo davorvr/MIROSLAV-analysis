@@ -32,10 +32,16 @@
 # If you want to run MIRO The Explorer in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
 
 # %%
-is_colab <- suppressWarnings(system("pip list | grep -F google-colab"))
-if (is_colab == 0) {
+return_code <- suppressWarnings(system("pip list | grep -F google-colab"))
+if (return_code == 0) {
+  is_colab = TRUE
+} else {
+  is_colab = FALSE
+}
+if (is_colab) {
   system("wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
   system("apt install ./libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
+  system("rm ./libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
   options(
     HTTPUserAgent =
       sprintf(
@@ -48,7 +54,7 @@ if (is_colab == 0) {
   install.packages(c("dplyr", "lubridate", "ggplot2", "patchwork"))
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
-  system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
+  system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/raw/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
   system("wget -O 3_outputs_R/mph_sine_data.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_data.rds")
   system("wget -O 3_outputs_R/mph_sine_models.rds https://github.com/davorvr/MIROSLAV-analysis/raw/main/3_outputs_R/mph_sine_models.rds")
 }
@@ -60,6 +66,7 @@ if (is_colab == 0) {
 # First, we import the libraries we will require.
 
 # %% message=false name="imports"
+library(arrow)
 library(dplyr)
 library(lubridate)
 library(ggplot2)
@@ -98,7 +105,7 @@ exp_end <- as_datetime("2022-05-31 17:46:00")
 
 # %% name="import_tidydata" tags=["remove_input"]
 wd <- paste0(getwd(), "/")
-data <- arrow::read_parquet(paste0(wd, "2_outputs_tidy/", tidydata_filename))
+data <- read_parquet(paste0(wd, "2_outputs_tidy/", tidydata_filename))
 data$ts_recv <- as_datetime(data$ts_recv, tz="UTC")
 data <- data %>% filter(ts_recv >= as_datetime(exp_start, tz="UTC"))
 data <- data %>% filter(ts_recv < as_datetime(exp_end, tz="UTC"))

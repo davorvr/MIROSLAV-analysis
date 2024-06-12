@@ -26,10 +26,16 @@
 # If you want to run MIROSine in Google Colab *and* with your own data, you can upload it using the File Browser in the sidebar on the left after running the following cell.
 
 # %%
-is_colab <- suppressWarnings(system("pip list | grep -F google-colab"))
-if (is_colab == 0) {
+return_code <- suppressWarnings(system("pip list | grep -F google-colab"))
+if (return_code == 0) {
+  is_colab = TRUE
+} else {
+  is_colab = FALSE
+}
+if (is_colab) {
   system("wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
   system("apt install ./libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
+  system("rm ./libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb")
   options(
     HTTPUserAgent =
       sprintf(
@@ -39,10 +45,9 @@ if (is_colab == 0) {
       )
   )
   install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/focal/latest")
-  install.packages(c("dplyr", "lubridate", "progress"))
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
-  system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/blob/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
+  system("wget -O 2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet https://github.com/davorvr/MIROSLAV-analysis/raw/main/2_outputs_tidy/mph-pir-tidy-source1minute-resampled5minutes.parquet")
 }
 
 # %% [markdown]
@@ -51,6 +56,7 @@ if (is_colab == 0) {
 # First, we import the libraries we will require. 
 #
 # %%
+library(arrow)
 library(dplyr)
 library(lubridate)
 library(progress)
@@ -78,7 +84,7 @@ exp_end <- as_datetime("2022-05-31 17:46:00")
 #
 # %%
 wd <- paste0(getwd(), "/")
-data <- arrow::read_parquet(paste0(wd, "2_outputs_tidy/", tidydata_filename))
+data <- read_parquet(paste0(wd, "2_outputs_tidy/", tidydata_filename))
 data$ts_recv <- as_datetime(data$ts_recv, tz="UTC")
 data <- data %>% filter(ts_recv >= as_datetime(exp_start, tz="UTC"))
 data <- data %>% filter(ts_recv < as_datetime(exp_end, tz="UTC"))
@@ -120,6 +126,7 @@ sine_models <- list()
 
 # %%
 i <- 0
+pb <- progress_bar$new(total = total_model_n, force = is_colab)
 for (id in sensor_animal_ids) {
   sine_models[[id]] <- list()
   for (day in days) {
@@ -189,6 +196,9 @@ for (id in sensor_animal_ids) {
     )
     sine_models[[sensor_animal_id]][[as.character(n_day)]] <- model
     
+    if (is_colab) {
+      clear_output()
+    }
     pb$tick()
   }
 }
