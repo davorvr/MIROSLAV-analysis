@@ -2,11 +2,13 @@
 
 ### What is it?
 
-This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data. Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-device`](https://github.com/davorvr/MIROSLAV-device) repository. The repository also includes real MIROSLAV data from our lab as an example you can work on.
+This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data. Here, you can also find real MIROSLAV data from our lab as an example that the tools operate on.
+
+Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-hardware`](https://github.com/davorvr/MIROSLAV-hardware) and [`MIROSLAV-hardware`](https://github.com/davorvr/MIROSLAV-firmware) repositories.
 
 ### What is MIROSLAV, anyway?
 
-**MIROSLAV (_Multicage InfraRed Open Source Locomotor Activity eValuator_)** is a platform for non-invasive monitoring of circadian locomotor activity in laboratory rodents. All of its hardware and software components are described in the paper: #url
+**MIROSLAV (_Multicage InfraRed Open Source Locomotor Activity eValuator_)** is a platform for non-invasive monitoring of circadian locomotor activity in laboratory rodents. MIROSLAV is fully open source and scalable to hundreds of cages. All of its hardware and software components are described in the paper: #url
 
 This repository holds the software for all stages of MIROSLAV data processing:
 
@@ -85,9 +87,10 @@ Listed in the `R_requirements.txt` file:
 
 ### Related repositories
 
-* [`mirofile`](https://github.com/davorvr/mirofile) - Your buddy for dealing with raw MIROSLAV data. A Python library used by Prepare-a-SLAV to parse raw MIROSLAV logs into a dataframe.
-* [`MIROSLAV-device`](https://github.com/davorvr/MIROSLAV-device) - Everything you need to construct the MIROSLAV device and start monitoring rodents' locomotor activity 24/7 in their home cages. Fully open source and scalable to hundreds of cages.
+* [`mirofile`](https://github.com/davorvr/mirofile) - Your buddy for dealing with raw MIROSLAV data. Our Python library used by Prepare-a-SLAV to parse raw MIROSLAV logs into a dataframe.
+* [`MIROSLAV-hardware`](https://github.com/davorvr/MIROSLAV-hardware) - Everything you need to construct the MIROSLAV device and start monitoring hundreds of rodents' locomotor activity patterns 24/7 in their home cages.
+* [`MIROSLAV-firmware`](https://github.com/davorvr/MIROSLAV-firmware) - Contains MIROSLAVino (Arduino firmware) and Record-a-SLAV (Python data acquisition script), everything you need to breathe life into your MIROSLAV device.
 
 ### License
 
-All code is distributed under the GPLv3 license.
+You can modify any part of MIROSLAV freely under the GPLv3 license - if you have any questions, problems, or ideas on how to improve MIROSLAV, feel free to reach out to us, submit a GitHub issue, or a pull request.
