@@ -7,7 +7,7 @@
 #       extension: .R
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.14.5
+#       jupytext_version: 1.16.2
 #   kernelspec:
 #     display_name: R
 #     language: R
@@ -44,7 +44,7 @@ if (is_colab == 0) {
       )
   )
   install.packages("arrow", repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
-  install.packages(c("writexl", "remotes", "emmeans", "patchwork", "glmmTMB"), repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
+  install.packages(c("writexl", "remotes", "emmeans", "patchwork", "glmmTMB", "DHARMa"), repos = "https://packagemanager.rstudio.com/all/__linux__/jammy/latest")
   wd <- paste0(getwd(), "/")
   dir.create(file.path(wd, "2_outputs_tidy"), showWarnings = FALSE)
   dir.create(file.path(wd, "3_outputs_R"), showWarnings = FALSE)
