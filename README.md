@@ -4,7 +4,7 @@
 
 This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data. Here, you can also find real MIROSLAV data from our lab as an example that the tools operate on.
 
-Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-hardware`](https://github.com/davorvr/MIROSLAV-hardware) and [`MIROSLAV-hardware`](https://github.com/davorvr/MIROSLAV-firmware) repositories.
+Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-hardware`](https://github.com/davorvr/MIROSLAV-hardware) and [`MIROSLAV-firmware`](https://github.com/davorvr/MIROSLAV-firmware) repositories.
 
 ### What is MIROSLAV, anyway?
 
