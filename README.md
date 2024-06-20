@@ -1,4 +1,5 @@
-# MIROSLAV analysis
+# MIROSLAV analysis 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12191590.svg)](https://doi.org/10.5281/zenodo.12191590)
 
 ### What is it?
 
