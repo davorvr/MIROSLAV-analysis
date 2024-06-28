@@ -3,13 +3,13 @@
 
 ### What is it?
 
-This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV data. Here, you can also find real MIROSLAV data from our lab as an example that the tools operate on.
+This repo holds a complete, user-friendly MIROSLAV software toolkit for analysis of MIROSLAV home cage activity and habitat environmental data. Here, you can also find real MIROSLAV data from our lab as an example that the tools operate on.
 
 Everything you need to construct the MIROSLAV device can be found in the [`MIROSLAV-hardware`](https://github.com/davorvr/MIROSLAV-hardware) and [`MIROSLAV-firmware`](https://github.com/davorvr/MIROSLAV-firmware) repositories.
 
 ### What is MIROSLAV, anyway?
 
-**MIROSLAV (_Multicage InfraRed Open Source Locomotor Activity eValuator_)** is a platform for non-invasive monitoring of circadian locomotor activity in laboratory rodents. MIROSLAV is fully open source and scalable to hundreds of cages. All of its hardware and software components are described in the paper: #url
+**MIROSLAV (_Multicage InfraRed Open Source Locomotor Activity eValuator_)** is a platform for non-invasive monitoring of circadian locomotor activity in laboratory rodents. MIROSLAV is fully open source and scalable to hundreds of cages. All of its hardware and software components are described in the paper: `#url`
 
 This repository holds the software for all stages of MIROSLAV data processing:
 
@@ -21,7 +21,19 @@ This repository holds the software for all stages of MIROSLAV data processing:
 | **3.1**  | **_MIRO The Explorer_** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/davorvr/MIROSLAV-analysis/blob/main/3-1_MIRO_The_Explorer.ipynb) | Generate exploratory plots showing temporal dynamics of the three MIROSine parameters over the course of the experiment                                                   | Exploratory plots.                                                                                                                      |
 | **3.2**  | **_StatistiSLAV_** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/davorvr/MIROSLAV-analysis/blob/main/3-2_StatistiSLAV.ipynb)           | Statistical comparisons of treated groups in specified timepoints                                                                                                         | Plots and an Excel document containing results.                                                                                         |
 
-<sup>_Table adapted from our MIROSLAV paper_</sup>
+<sup>_Table adapted from our MIROSLAV paper._</sup>
+
+#### Environmental monitoring data
+
+Additionally, the [`E_EnviroSLAV` directory](https://github.com/davorvr/MIROSLAV-analysis/tree/main/E_EnviroSLAV) contains tools for parsing and plotting environmental data. Two logs are supplied:
+
+1. [`miroslav-env-rack_M.2024-06-27T14-04-44-916883.gz`](https://github.com/davorvr/MIROSLAV-analysis/tree/main/E_EnviroSLAV/0_raw_env/miroslav-env-rack_M.2024-06-27T14-04-44-916883.gz) - A short test environmental monitoring log from the current MIROSLAV v0.4, as a sample of the current log format which is now stable and will be used for future MIROSLAV versions as well. The log follows current MIROSLAV file naming conventions, detailed in [the Prepare-a-SLAV config file](https://github.com/davorvr/MIROSLAV-analysis/blob/main/1_Prepare-a-SLAV_config.toml).
+
+2. [`0_proto_env.csv.gz`](https://github.com/davorvr/MIROSLAV-analysis/tree/main/E_EnviroSLAV/0_raw_env/0_proto_env.csv.gz) - A log recorded with a MIROSLAV prototype during a real experiment, recorded in an older format, but kept in its original form for posterity.
+
+The parser, [`1_EnviroSLAV_parse.py`](https://github.com/davorvr/MIROSLAV-analysis/tree/main/E_EnviroSLAV/1_EnviroSLAV_parse.py), converts both to `.parquet` files of an equivalent format.
+
+The visualiser, [`2_EnviroSLAV_plot.R`](https://github.com/davorvr/MIROSLAV-analysis/tree/main/E_EnviroSLAV/2_EnviroSLAV_plot.R), can read either, but the example code works on prototype logs as they contain nearly 3 weeks of real data recorded in an animal habitat during an experiment.
 
 ### How to utilise this workflow?
 

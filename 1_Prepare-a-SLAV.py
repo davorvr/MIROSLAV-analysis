@@ -33,7 +33,7 @@ except ModuleNotFoundError:
 else:
     IN_COLAB = True
     import sys
-    from IPython.display import clear_output 
+    from IPython.display import clear_output
     import importlib.metadata
     import packaging.version
     if packaging.version.Version(importlib.metadata.version("pandas")) < packaging.version.Version("2.2"):
@@ -171,7 +171,7 @@ for device, colmap in colmaps.items():
     if resample:
         suffix += f"-resampled-{resample_bin}".replace(" ", "")
     pqfile = Path(output_path, mname+suffix+".parquet")
-    
+
     if pqfile.exists():
         raise FileExistsError("Database file already exists, not overwriting!")
         #pass
@@ -220,7 +220,7 @@ for device, colmap in colmaps.items():
                         file_chunk_supplement.append(mfile.readlists(supp_len, progress_bar=True))
                         chunk_end = pd.to_datetime(file_chunk_supplement[-1][ts_index])
                         #last_line = mfile.readlist()
-                
+
                     file_chunk_supplement = pd.DataFrame.from_records(file_chunk_supplement, columns=all_columns)
                     file_chunk_supplement = file_chunk_supplement.astype(dict(zip(all_columns, all_column_dtypes)))
                     file_chunk = pd.concat([file_chunk, file_chunk_supplement.loc[file_chunk_supplement[ts_column] < bin_end].copy()], ignore_index=True)
@@ -251,7 +251,7 @@ for device, colmap in colmaps.items():
                 file_chunk = file_chunk.resample(resample_bin_td).mean(numeric_only=False)
             else:
                 file_chunk = file_chunk.resample(resample_bin_td).mean(numeric_only=True)
-            
+
         if not pqfile.exists():
             file_chunk.to_parquet(pqfile.absolute(), engine="fastparquet")
         else:
