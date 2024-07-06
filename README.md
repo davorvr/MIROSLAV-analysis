@@ -1,5 +1,7 @@
-# MIROSLAV analysis 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12191590.svg)](https://doi.org/10.5281/zenodo.12191590)
+<img src="logo/hexsticker.png" height="170" align="left" hspace=15></img>
+<br> MIROSLAV analysis <br>
+[![Full paper](https://img.shields.io/badge/Full%20paper-10.1101%2F2024.06.25.600592-%23B12929)](https://doi.org/10.1101/2024.06.25.600592) [![Zenodo](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.12191590-%230F81C2)](https://doi.org/10.5281/zenodo.12191590) <br clear="left"/>
+========
 
 ### What is it?
 
@@ -9,7 +11,7 @@ Everything you need to construct the MIROSLAV device can be found in the [`MIROS
 
 ### What is MIROSLAV, anyway?
 
-**MIROSLAV (_Multicage InfraRed Open Source Locomotor Activity eValuator_)** is a platform for non-invasive monitoring of circadian locomotor activity in laboratory rodents. MIROSLAV is fully open source and scalable to hundreds of cages. All of its hardware and software components are described in the paper: `#url`
+**MIROSLAV (_Multicage InfraRed Open Source Locomotor Activity eValuator_)** is a platform for non-invasive monitoring of circadian locomotor activity in laboratory rodents. MIROSLAV is fully open source and scalable to hundreds of cages. All of its hardware and software components are described in the paper: https://doi.org/10.1101/2024.06.25.600592
 
 This repository holds the software for all stages of MIROSLAV data processing:
 
@@ -106,4 +108,6 @@ Listed in the `R_requirements.txt` file:
 
 ### License
 
-You can modify any part of MIROSLAV freely under the GPLv3 license - if you have any questions, problems, or ideas on how to improve MIROSLAV, feel free to reach out to us, submit a GitHub issue, or a pull request.
+You can modify any part of MIROSLAV freely under the **GPLv3** license - if you have any questions, problems, or ideas on how to improve MIROSLAV, feel free to reach out to us, submit a GitHub issue, or a pull request.
+
+The MIROSLAV logo is created by Petra Šoštarić Mužić and licensed under the **CC BY-NC-SA 4.0** license - more details can be found in the repository's [`logo/` directory](logo/).
